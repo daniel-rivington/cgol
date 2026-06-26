@@ -14,7 +14,6 @@ CELL_SIZE = SCREEN_SIZE // max(HEIGHT, WIDTH)
 PREVIEW_STEPS = 50
 FALLOFF = 3
 
-
 space = np.zeros((HEIGHT, WIDTH))
 
 def populate(space: list[list], sparsity: float):
@@ -117,7 +116,10 @@ while running:
                 populate(space, SPARSITY)
             if event.key == pygame.K_k:
                 space = np.zeros((HEIGHT, WIDTH))
-
+            if event.key == pygame.K_UP:
+                PREVIEW_STEPS += 1
+            if event.key == pygame.K_DOWN:
+                PREVIEW_STEPS -= 1
             
 
     screen.fill((0,0,0))
@@ -134,7 +136,7 @@ while running:
             for w in range(WIDTH):
                 if space[h][w] == 1:
                     pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(w*(CELL_SIZE+1), h*(CELL_SIZE+1), CELL_SIZE, CELL_SIZE))
-
+    
     # if preview:
     #     changes = step(space)
     #     for h in range(HEIGHT):
