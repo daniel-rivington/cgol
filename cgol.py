@@ -3,15 +3,15 @@ import sys
 import numpy as np
 import random
 
-HEIGHT = 15
-WIDTH = 15
-BORN = (3,)
-SURVIVE = (3, 2,)
+HEIGHT = 50
+WIDTH = 50
+BORN = (3,4,5)
+SURVIVE = (4,5,6,7)
 SPARSITY = 0.5
 
 SCREEN_SIZE = 800
 CELL_SIZE = SCREEN_SIZE // max(HEIGHT, WIDTH)
-PREVIEW_STEPS = 50
+PREVIEW_STEPS = 1
 FALLOFF = 3
 
 space = np.zeros((HEIGHT, WIDTH))
@@ -120,6 +120,10 @@ while running:
                 PREVIEW_STEPS += 1
             if event.key == pygame.K_DOWN:
                 PREVIEW_STEPS -= 1
+            if event.key == pygame.K_t:
+                SPARSITY += 0.05
+            if event.key == pygame.K_e:
+                SPARSITY -= 0.05
             
 
     screen.fill((0,0,0))
