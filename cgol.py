@@ -72,18 +72,28 @@ screen = pygame.display.set_mode((SCREEN_SIZE,SCREEN_SIZE))
 clock = pygame.time.Clock()
 
 
-def render_future(space, depth, w, h):
-    if depth > PREVIEW_STEPS:
+def render_future(space, depth):
+    if depth > PREVIEW_STEPS or depth == 0:
         return
-    a = pygame.Rect(w*(CELL_SIZE+1) -1 + np.floor(CELL_SIZE*(1/2 - 1/depth)),
-                h*(CELL_SIZE+1) -1 + np.floor(CELL_SIZE*(1/2 - 1/depth)), CELL_SIZE//depth, CELL_SIZE//depth)
-    changes = step(space)
-    for h in range(HEIGHT):
+    if depth == 1:
+        for h in range(HEIGHT):
             for w in range(WIDTH):
-                if changes[h][w] == -1:
-                    pygame.draw.rect(screen, (200, 200, 255), a)
-                elif changes[h][w] == 1:
-                    pygame.draw.rect(screen, (255, 255, 255), a)
+                if space[h][w] == 1:
+                    pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(w*(CELL_SIZE+1), h*(CELL_SIZE+1), CELL_SIZE, CELL_SIZE))
+        changes = step(space)
+        render_future(space + changes, depth + 1)
+    else:
+        changes = step(space)
+        for h in range(HEIGHT):
+                for w in range(WIDTH):
+                    if not changes[h][w] == 1:
+                        a = pygame.Rect(w*(CELL_SIZE+1) -1 + np.floor(CELL_SIZE*(1/2 - 1/depth)),
+                            h*(CELL_SIZE+1) -1 + np.floor(CELL_SIZE*(1/2 - 1/depth)), CELL_SIZE//depth, CELL_SIZE//depth)
+                    if changes[h][w] == -1:
+                        pygame.draw.rect(screen, (200, 200, 255), a)
+                    elif changes[h][w] == 1:
+                        pygame.draw.rect(screen, (255, 255, 255), a)
+        render_future(space + changes, depth + 1)
 
 running = True
 while running:
@@ -116,22 +126,23 @@ while running:
     if auto:
         gametick(space)
 
+    render_future(space, 1)
 
-    for h in range(HEIGHT):
-        for w in range(WIDTH):
-            if space[h][w] == 1:
-                pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(w*(CELL_SIZE+1), h*(CELL_SIZE+1), CELL_SIZE, CELL_SIZE))
+    # for h in range(HEIGHT):
+    #     for w in range(WIDTH):
+    #         if space[h][w] == 1:
+    #             pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(w*(CELL_SIZE+1), h*(CELL_SIZE+1), CELL_SIZE, CELL_SIZE))
 
-    if preview:
-        changes = step(space)
-        for h in range(HEIGHT):
-            for w in range(WIDTH):
-                if changes[h][w] == -1:
-                    pygame.draw.rect(screen, (200, 200, 255), pygame.Rect(
-                        w*(CELL_SIZE+1) -1 + CELL_SIZE//3, h*(CELL_SIZE+1) -1 + CELL_SIZE//3, CELL_SIZE*2//3, CELL_SIZE*2//3))
-                elif changes[h][w] == 1:
-                    pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(
-                        w*(CELL_SIZE+1) -1 + CELL_SIZE//3, h*(CELL_SIZE+1) -1 + CELL_SIZE//3, CELL_SIZE*2//3, CELL_SIZE*2//3))
+    # if preview:
+    #     changes = step(space)
+    #     for h in range(HEIGHT):
+    #         for w in range(WIDTH):
+    #             if changes[h][w] == -1:
+    #                 pygame.draw.rect(screen, (200, 200, 255), pygame.Rect(
+    #                     w*(CELL_SIZE+1) -1 + CELL_SIZE//3, h*(CELL_SIZE+1) -1 + CELL_SIZE//3, CELL_SIZE*2//3, CELL_SIZE*2//3))
+    #             elif changes[h][w] == 1:
+    #                 pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(
+    #                     w*(CELL_SIZE+1) -1 + CELL_SIZE//3, h*(CELL_SIZE+1) -1 + CELL_SIZE//3, CELL_SIZE*2//3, CELL_SIZE*2//3))
 
     pygame.display.flip()
 
